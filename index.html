@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Todo-App</title>
     <link rel="stylesheet" href="style.css">
+    <script src="todo.js" defer></script>
 </head>
 
 <body>
@@ -17,33 +18,12 @@
         <button id="add-button">Add</button>
       </form>
       <select id="todo-select">
+        <option value="all">All</option>
         <option value="completed">Completed</option>
-        <option value="completed">Uncompleted</option>
+        <option value="uncompleted">Uncompleted</option>
       </select>
     </div>
     <ul id="todo-list">
-      <li class="todo">
-        <input type="checkbox" id="todo-1">
-        <label class="custom-checkbox" for="todo-1">
-          
-        </label>
-        <label for="todo-2" class="todo-text">
-          some text
-        </label>
-        <button class="edit-button">Edit</button>
-        <button class="delete-button">Delete</button>
-      </li>
-      <li class="todo">
-        <input type="checkbox" id="todo-3">
-        <label class="custom-checkbox" for="todo-3">
-          
-        </label>
-        <label for="todo-4" class="todo-text">
-          some text
-        </label>
-        <button class="edit-button">Edit</button>
-        <button class="delete-button">Delete</button>
-      </li>
     </ul>
   </div>
 </body>
