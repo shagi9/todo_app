@@ -12,17 +12,19 @@
 <body>
   <h1>Todo App</h1>
   <div class="wrapper">
-    <div id="header">
       <form>
-        <input id="todo-input" type="text" placeholder="write something" autocomplete="off">
-        <button id="add-button">Add</button>
+        <div class="inputs-container">
+          <input id="todo-input" type="text" placeholder="write something" autocomplete="off">
+          <button id="add-button">Add</button>
+        </div>
+          <div class="select-container">
+            <select id="todo-select">
+              <option value="all">All</option>
+              <option value="completed">Completed</option>
+              <option value="uncompleted">Uncompleted</option>
+            </select>
+          </div>
       </form>
-      <select id="todo-select">
-        <option value="all">All</option>
-        <option value="completed">Completed</option>
-        <option value="uncompleted">Uncompleted</option>
-      </select>
-    </div>
     <ul id="todo-list">
     </ul>
   </div>
