@@ -49,6 +49,33 @@ h1 {
   text-align: center;
 }
 
+.edit-input {
+  padding: 12px 20px;
+  width: calc(100% - 80px); /* Adjust width to account for the button */
+  background: none;
+  border: 2px solid var(--primaryColor);
+  border-radius: 1000px;
+  font: inherit;
+}
+
+.edit-input:focus {
+  outline: none;
+}
+
+.edit-save-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #DCF5FA;
+  color: #007C9F;
+  height: 100%;
+  padding: 0 15px 0 15px;
+  font-weight: 600;
+  border: none;
+  border-radius: 1000px;
+  cursor: pointer;
+}
+
 #todo-input {
   box-sizing: border-box;
   padding: 12px 20px;
@@ -65,8 +92,8 @@ form {
 }
 
 .inputs-container {
-  flex-grow: 1;
   position: relative;
+  width: 100%;
 }
 
 #todo-input:focus {
@@ -96,9 +123,24 @@ form {
   margin-bottom: 10px;
   padding: 0 16px;
   background-color: #DCF5FA;
-  border-radius: 15px;
+  border-radius: 1000px; /* Make it consistent */
   display: flex;
   align-items: center;
+}
+
+.edit-mode {
+  padding: 0 16px 0 0;
+}
+
+.delete-button {
+  background: #D52117;
+  color: #fafafa;
+  border-radius: 1000px;
+  border: none;
+  padding: 0 20px;
+  cursor: pointer;
+  height: 100%;
+  margin-left: 10px;
 }
 
 .todo .todo-text {
