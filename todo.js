@@ -8,11 +8,25 @@ let uniqueId = 0;
 let allTodos = [];
 
 const init = () => {
+  loadTodosFromLocalStorage();
   todoForm.addEventListener("submit", handleAddTodoSubmit);
   todoSelect.addEventListener("change", filterTodos);
   todoListUl.addEventListener("click", handleTodoListClick);
   todoListUl.addEventListener("input", handleTodoListInput);
 }
+
+const saveTodosToLocalStorage = () => {
+  localStorage.setItem('todos', JSON.stringify(allTodos));
+};
+
+const loadTodosFromLocalStorage = () => {
+  const storedTodos = localStorage.getItem('todos');
+  if (storedTodos) {
+    allTodos = JSON.parse(storedTodos);
+    uniqueId = allTodos.length > 0 ? Math.max(...allTodos.map(todo => todo.id)) : 0;
+    renderTodoList(allTodos);
+  }
+};
 
 const handleAddTodoSubmit = (e) => {
   e.preventDefault();
@@ -38,18 +52,21 @@ const handleTodoListInput = (e) => {
   if (e.target.classList.contains("edit-input")) {
     const todoIndex = parseInt(e.target.dataset.id);
     allTodos = allTodos.map(todo => todo.id === todoIndex ? { ...todo, text: e.target.value } : todo);
+    saveTodosToLocalStorage();  // Save after input change
   }
 }
 
 const deleteTodo = (todoIndex) => {
   allTodos = allTodos.filter(todo => todo.id !== todoIndex);
   renderTodoList(allTodos);
+  saveTodosToLocalStorage();  // Save after deleting
 }
 
 const toggleCheckbox = (todoIndex, isChecked) => {
   const todo = allTodos.find(todo => todo.id === todoIndex);
   todo.status = isChecked ? 'completed' : 'uncompleted';
   renderTodoList(allTodos);
+  saveTodosToLocalStorage();  // Save after toggling
 };
 
 const enableEditMode = (todoIndex) => {
@@ -62,6 +79,7 @@ const saveEdit = (todoIndex) => {
   const todo = allTodos.find(todo => todo.id === todoIndex);
   todo.isEditing = false;
   renderTodoList(allTodos);
+  saveTodosToLocalStorage();  // Save after editing
 }
 
 const addTodo = () => {
@@ -74,6 +92,7 @@ const addTodo = () => {
   allTodos.push({ id: uniqueId, text: todoText, status: defaultStatus, isEditing: false });
   todoInput.value = '';
   renderTodoList(allTodos);
+  saveTodosToLocalStorage();  // Save after adding
 }
 
 const createButton = (text, className, dataId) => {
