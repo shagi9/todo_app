@@ -1,9 +1,19 @@
 {
   "compilerOptions": {
     "target": "es6",
+    "module": "es6",
     "lib": ["es6", "dom"],
-    "module": "commonjs",
+    "outDir": "./dist", 
     "strict": true,
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "baseUrl": "./src",
+    "paths": {
+      "@enums/*": ["enums/*"],
+      "@interfaces/*": ["interfaces/*"],
+      "@utils/*": ["utils/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }

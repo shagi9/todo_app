@@ -1,47 +1,26 @@
-enum TodoStatusString {
-  Completed = 'completed',
-  Uncompleted = 'uncompleted',
-  All = 'all'
-}
-
-type TodoStatus = TodoStatusString.Completed | TodoStatusString.Uncompleted | TodoStatusString.All;
-
-interface Todo {
-  id: number;
-  text: string;
-  status: TodoStatus;
-  isEditing: boolean;
-}
+import { TodoStatusEnum } from './enums/TodoStatusEnum';
+import { TodoModel } from './interfaces/TodoModel';
+import { TodoStatusType } from './types/TodoStatusType';
+import { loadTodosFromLocalStorage, saveTodosToLocalStorage } from './utils/localStorageUtils';
 
 const todoForm = document.querySelector("form") as HTMLFormElement;
 const todoSelect = document.querySelector("select") as HTMLSelectElement;
 const todoInput = document.getElementById("todo-input") as HTMLInputElement;
 const todoListUl = document.getElementById("todo-list") as HTMLUListElement;
 
-const defaultStatus: TodoStatus = TodoStatusString.Uncompleted;
+const defaultStatus: TodoStatusType = TodoStatusEnum.Uncompleted;
 let uniqueId = 0;
-let allTodos: Todo[] = [];
+let allTodos: TodoModel[] = [];
 
 const init = (): void => {
-  loadTodosFromLocalStorage();
+  allTodos = loadTodosFromLocalStorage();
+  uniqueId = allTodos.length > 0 ? Math.max(...allTodos.map(todo => todo.id)) : 0;
+  renderTodoList(allTodos);
   todoForm.addEventListener("submit", handleAddTodoSubmit);
   todoSelect.addEventListener("change", filterTodos);
   todoListUl.addEventListener("click", handleTodoListClick);
   todoListUl.addEventListener("input", handleTodoListInput);
 }
-
-const saveTodosToLocalStorage = (): void => {
-  localStorage.setItem('todos', JSON.stringify(allTodos));
-};
-
-const loadTodosFromLocalStorage = (): void => {
-  const storedTodos = localStorage.getItem('todos');
-  if (storedTodos) {
-    allTodos = JSON.parse(storedTodos) as Todo[];
-    uniqueId = allTodos.length > 0 ? Math.max(...allTodos.map(todo => todo.id)) : 0;
-    renderTodoList(allTodos);
-  }
-};
 
 const handleAddTodoSubmit = (e: Event): void => {
   e.preventDefault();
@@ -49,8 +28,8 @@ const handleAddTodoSubmit = (e: Event): void => {
 }
 
 const filterTodos = (e: Event): void => {
-  const filterValue = (e.target as HTMLSelectElement).value as TodoStatus;
-  const filteredTodos = allTodos.filter(todo => filterValue === TodoStatusString.All || todo.status === filterValue);
+  const filterValue = (e.target as HTMLSelectElement).value as TodoStatusType;
+  const filteredTodos = allTodos.filter(todo => filterValue === TodoStatusEnum.All || todo.status === filterValue);
   renderTodoList(filteredTodos);
 }
 
@@ -69,22 +48,22 @@ const handleTodoListInput = (e: Event): void => {
   if (target.classList.contains("edit-input")) {
     const todoIndex = parseInt(target.dataset.id || '0');
     allTodos = allTodos.map(todo => todo.id === todoIndex ? { ...todo, text: target.value } : todo);
-    saveTodosToLocalStorage();  // Save after input change
+    saveTodosToLocalStorage(allTodos);  // Save after input change
   }
 }
 
 const deleteTodo = (todoIndex: number): void => {
   allTodos = allTodos.filter(todo => todo.id !== todoIndex);
   renderTodoList(allTodos);
-  saveTodosToLocalStorage();  // Save after deleting
+  saveTodosToLocalStorage(allTodos);  // Save after deleting
 }
 
 const toggleCheckbox = (todoIndex: number, isChecked: boolean): void => {
   const todo = allTodos.find(todo => todo.id === todoIndex);
   if (todo) {
-    todo.status = isChecked ? TodoStatusString.Completed : TodoStatusString.Uncompleted;
+    todo.status = isChecked ? TodoStatusEnum.Completed : TodoStatusEnum.Uncompleted;
     renderTodoList(allTodos);
-    saveTodosToLocalStorage();  // Save after toggling
+    saveTodosToLocalStorage(allTodos);  // Save after toggling
   }
 };
 
@@ -101,7 +80,7 @@ const saveEdit = (todoIndex: number): void => {
   if (todo) {
     todo.isEditing = false;
     renderTodoList(allTodos);
-    saveTodosToLocalStorage();  // Save after editing
+    saveTodosToLocalStorage(allTodos);  // Save after editing
   }
 }
 
@@ -115,7 +94,7 @@ const addTodo = (): void => {
   allTodos.push({ id: uniqueId, text: todoText, status: defaultStatus, isEditing: false });
   todoInput.value = '';
   renderTodoList(allTodos);
-  saveTodosToLocalStorage();  // Save after adding
+  saveTodosToLocalStorage(allTodos);  // Save after adding
 }
 
 const createButton = (text: string, className: string, dataId: number): HTMLButtonElement => {
@@ -135,7 +114,7 @@ const createInput = (type: string, className: string, value: string, dataId: num
   return input;
 };
 
-const createTodoItem = (todo: Todo): HTMLLIElement => {
+const createTodoItem = (todo: TodoModel): HTMLLIElement => {
   const todoLi = document.createElement("li");
   todoLi.id = `todo-${todo.id}`;
   todoLi.className = `todo ${todo.isEditing ? 'edit-mode' : ''}`;
@@ -150,12 +129,12 @@ const createTodoItem = (todo: Todo): HTMLLIElement => {
     todoLi.append(inputsContainer, createButton("Delete", "delete-button", todo.id));
   } else {
     const checkbox = createInput("checkbox", "checkbox", "", todo.id);
-    checkbox.checked = todo.status === TodoStatusString.Completed;
+    checkbox.checked = todo.status === TodoStatusEnum.Completed;
 
     const labelText = document.createElement("label");
     labelText.className = 'todo-text';
     labelText.textContent = todo.text;
-    if (todo.status === TodoStatusString.Completed) {
+    if (todo.status === TodoStatusEnum.Completed) {
       labelText.style.textDecoration = 'line-through';
       labelText.style.color = '#005f7a';
     }
@@ -166,7 +145,7 @@ const createTodoItem = (todo: Todo): HTMLLIElement => {
   return todoLi;
 };
 
-const renderTodoList = (todos: Todo[]): void => {
+const renderTodoList = (todos: TodoModel[]): void => {
   todoListUl.innerHTML = '';
   todos.forEach(todo => {
     todoListUl.appendChild(createTodoItem(todo));
